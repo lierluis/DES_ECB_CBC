@@ -519,46 +519,48 @@ public class Crypto {
             1, 1, 1, 1, 1, 0, 0, 0, 1};
 
         int[] ciphertext_DES = DES(plaintext_DES, key_DES);
-        p("DES"); print(ciphertext_DES);
+        p("DES");
+        print(ciphertext_DES);
         
-        // String plaintext_ECB_1 = "I LOVE SECURITY";
-        // String key_ECB_1 = "ABCDEFGH";
-        // String plaintext_ECB_2 = "GO GATORS!";
-        // String key_ECB_2 = "ABCDEFGH";
+        String plaintext_ECB_1 = "I LOVE SECURITY";
+        String key_ECB_1 = "ABCDEFGH";
+        String plaintext_ECB_2 = "GO GATORS!";
+        String key_ECB_2 = "ABCDEFGH";
         
-        // p("ECB_1");
-        // int[] ciphertext_ECB_1 = ECB(plaintext_ECB_1, key_ECB_1);
-        // for (int i = 0; i < ciphertext_ECB_1.length; i++) {
-        //     System.out.print(ciphertext_ECB_1[i] + " ");
-        // }
-        // p("");
+        p("ECB_1");
+        int[] ciphertext_ECB_1 = ECB(plaintext_ECB_1, key_ECB_1);
+        for (int i = 0; i < ciphertext_ECB_1.length; i++) {
+            System.out.print(ciphertext_ECB_1[i] + " ");
+        }
+        p("");
         
-        // p("ECB_2");
-        // int[] ciphertext_ECB_2 = ECB(plaintext_ECB_2, key_ECB_2);
-        // for (int i = 0; i < ciphertext_ECB_2.length; i++) {
-        //     System.out.print(ciphertext_ECB_2[i] + " ");
-        // }
-        // p("");
+        p("ECB_2");
+        int[] ciphertext_ECB_2 = ECB(plaintext_ECB_2, key_ECB_2);
+        for (int i = 0; i < ciphertext_ECB_2.length; i++) {
+            System.out.print(ciphertext_ECB_2[i] + " ");
+        }
+        p("");
         
-        // String plaintext_CBC_1 = "I LOVE SECURITY";
-        // String key_CBC_1 = "ABCDEFGH";
-        // String IV_1 = "ABCDEFGH";
-        // String plaintext_CBC_2 = "SECURITYSECURITY";
-        // String key_CBC_2 = "ABCDEFGH";
-        // String IV_2 = "ABCDEFGH";
+        String plaintext_CBC_1 = "I LOVE SECURITY";
+        String key_CBC_1 = "ABCDEFGH";
+        String IV_1 = "ABCDEFGH";
+        String plaintext_CBC_2 = "SECURITYSECURITY";
+        String key_CBC_2 = "ABCDEFGH";
+        String IV_2 = "ABCDEFGH";
         
-        // p("CBC_1");
-        // int[] ciphertext_CBC = CBC(plaintext_CBC_1, key_CBC_1, IV_1);
-        // for (int i = 0; i < ciphertext_CBC.length; i++) {
-        //     System.out.print(ciphertext_CBC[i] + " ");
-        // }
-        // p("");
-        // p("CBC_2");
-        // int[] ciphertext_CBC_2 = CBC(plaintext_CBC_2, key_CBC_2, IV_2);
-        // for (int i = 0; i < ciphertext_CBC_2.length; i++) {
-        //     System.out.print(ciphertext_CBC_2[i] + " ");
-        // }
-        // p("");
+        p("CBC_1");
+        int[] ciphertext_CBC = CBC(plaintext_CBC_1, key_CBC_1, IV_1);
+        for (int i = 0; i < ciphertext_CBC.length; i++) {
+            System.out.print(ciphertext_CBC[i] + " ");
+        }
+        p("");
+        
+        p("CBC_2");
+        int[] ciphertext_CBC_2 = CBC(plaintext_CBC_2, key_CBC_2, IV_2);
+        for (int i = 0; i < ciphertext_CBC_2.length; i++) {
+            System.out.print(ciphertext_CBC_2[i] + " ");
+        }
+        p("");
     }
     
 }
