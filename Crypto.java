@@ -3,7 +3,6 @@
  *  Class: CSC 650
  *   Date: 2/29/16
  */
-package pkg650_project1;
 
 import java.util.Random;
 
