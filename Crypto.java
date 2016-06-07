@@ -469,5 +469,97 @@ public class Crypto {
         }
         return arr_2d;
     }
+
+    /** print 1d arrays */
+    static void print(int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            System.out.print(arr[i]);
+            if (arr.length == 64) {
+                if ((i+1) % 8 == 0) System.out.print(" ");
+            } else if (arr.length == 56) {
+                if ((i+1) % 7 == 0) System.out.print(" ");
+            } else if (arr.length == 48) {
+                if ((i+1) % 6 == 0) System.out.print(" ");
+            } else if (arr.length == 32) {
+                if ((i+1) % 4 == 0) System.out.print(" ");
+            } else if (arr.length == 28) {
+                if ((i+1) % 7 == 0) System.out.print(" ");
+            } else if (arr.length == 24) {
+                if ((i+1) % 8 == 0) System.out.print(" ");
+            } else if (arr.length == 8) {
+                if ((i+1) % 1 == 0) System.out.print(" ");
+            } else {
+                //System.out.println();  
+                if ((i+1) % 8 == 0) System.out.print(" ");
+            }
+        }
+        System.out.println();
+    }
+
+    /** print 2d arrays */
+    static void print(int[][] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            print(arr[i]);
+        }
+        System.out.println();
+    }
+    
+    /** I'm lazy, ok? */
+    static void p(String s) {
+        System.out.println(s);
+    }
+
+    public static void main(String[] args) {
+        int[] plaintext_DES = {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0,
+            0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1,
+            0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1,
+            1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1};
+        int[] key_DES = {0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0,
+            0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0,
+            1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 0, 0, 0, 1};
+
+        int[] ciphertext_DES = DES(plaintext_DES, key_DES);
+        p("DES"); print(ciphertext_DES);
+        
+        // String plaintext_ECB_1 = "I LOVE SECURITY";
+        // String key_ECB_1 = "ABCDEFGH";
+        // String plaintext_ECB_2 = "GO GATORS!";
+        // String key_ECB_2 = "ABCDEFGH";
+        
+        // p("ECB_1");
+        // int[] ciphertext_ECB_1 = ECB(plaintext_ECB_1, key_ECB_1);
+        // for (int i = 0; i < ciphertext_ECB_1.length; i++) {
+        //     System.out.print(ciphertext_ECB_1[i] + " ");
+        // }
+        // p("");
+        
+        // p("ECB_2");
+        // int[] ciphertext_ECB_2 = ECB(plaintext_ECB_2, key_ECB_2);
+        // for (int i = 0; i < ciphertext_ECB_2.length; i++) {
+        //     System.out.print(ciphertext_ECB_2[i] + " ");
+        // }
+        // p("");
+        
+        // String plaintext_CBC_1 = "I LOVE SECURITY";
+        // String key_CBC_1 = "ABCDEFGH";
+        // String IV_1 = "ABCDEFGH";
+        // String plaintext_CBC_2 = "SECURITYSECURITY";
+        // String key_CBC_2 = "ABCDEFGH";
+        // String IV_2 = "ABCDEFGH";
+        
+        // p("CBC_1");
+        // int[] ciphertext_CBC = CBC(plaintext_CBC_1, key_CBC_1, IV_1);
+        // for (int i = 0; i < ciphertext_CBC.length; i++) {
+        //     System.out.print(ciphertext_CBC[i] + " ");
+        // }
+        // p("");
+        // p("CBC_2");
+        // int[] ciphertext_CBC_2 = CBC(plaintext_CBC_2, key_CBC_2, IV_2);
+        // for (int i = 0; i < ciphertext_CBC_2.length; i++) {
+        //     System.out.print(ciphertext_CBC_2[i] + " ");
+        // }
+        // p("");
+    }
     
 }
