@@ -5,13 +5,9 @@ Encryption algorithms DES, ECB, and CBC written in Java
 * [Electronic Codebook](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#ECB)
 * [Cipher Block Chaining](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#CBC)
 
-To compile:
+To compile and run:
 ```
 javac Crypto.java
-```
-
-To run:
-```
 java Crypto
 ```     
 
