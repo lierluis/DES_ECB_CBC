@@ -1,14 +1,15 @@
 # DES_ECB_CBC
+
 Encryption algorithms DES, ECB, and CBC written in Java
 
 * [Data Encryption Standard](https://en.wikipedia.org/wiki/Data_Encryption_Standard)
+* [DES in detail](https://www.memresearch.org/grabbe/des.htm)
 * [Electronic Codebook](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#ECB)
 * [Cipher Block Chaining](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#CBC)
 
 To compile and run:
 ```
-javac Crypto.java
-java Crypto
+javac Crypto.java && java Crypto
 ```     
 
 Sample output:
