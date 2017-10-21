@@ -1,6 +1,6 @@
 # DES_ECB_CBC
 
-Encryption algorithms DES, ECB, and CBC written in Java
+Encryption algorithm DES and block cipher modes ECB and CBC written in Java
 
 * [Data Encryption Standard](https://en.wikipedia.org/wiki/Data_Encryption_Standard)
 * [DES in detail](https://www.memresearch.org/grabbe/des.htm)
