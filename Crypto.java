@@ -37,52 +37,7 @@ public class Crypto {
     private static int[][] generatePerRoundKeys(int[] key) {
 
         int[] p_k = permutateKey(key);
-
-        // Split 56-bit permutated key p_k into 2 halves C0 and D0.
-        // Cn and Dn, 1 <= n <= 16, stored as cn[1...16] and dn[1...16],
-        // respectively, are blocks from from the previous pair Cn-1 and Dn-1,
-        // respectively, using a series of left-shifts of the previous blocks.
-
-        int[][] cn = new int[17][28]; // C0,C1...,C26
-        int[][] dn = new int[17][28]; // D0,D1,...,D26
-
-        System.arraycopy(p_k, 0, cn[0], 0, 28); // C0
-        System.arraycopy(p_k, 28, dn[0], 0, 28); // D0
-
-        for (byte i = 1; i < 17; i++) {
-            for (byte j = 0; j < 26; j++) {
-                if (i != 1 && i != 2 && i != 9 && i != 16) {
-                    // 2 left-shifts
-                    cn[i][j] = cn[i-1][j+2];
-                    dn[i][j] = dn[i-1][j+2];
-                } else {
-                    // 1 left-shift
-                    cn[i][j] = cn[i-1][j+1];
-                    dn[i][j] = dn[i-1][j+1];
-                }
-            }
-            // Move bits that were in the front to the back after left-shifts
-            if (i != 1 && i != 2 && i != 9 && i != 16) {
-                cn[i][26] = cn[i-1][0];
-                cn[i][27] = cn[i-1][1];
-                dn[i][26] = dn[i-1][0];
-                dn[i][27] = dn[i-1][1];
-            } else {
-                cn[i][26] = cn[i-1][27];
-                cn[i][27] = cn[i-1][0];
-                dn[i][26] = dn[i-1][27];
-                dn[i][27] = dn[i-1][0];
-            }
-        }
-
-        // Concatenate Cn and Dn into CnDn
-        int[][] cndn = new int[16][56];
-        for (byte i = 0; i < 16; i++) {
-            for (byte j = 0; j < 28; j++) {
-                cndn[i][j] = cn[i+1][j];
-                cndn[i][j+28] = dn[i+1][j];
-            }
-        }
+        int[][] cndn = generateCnDn(p_k);
 
         // Generate 16 48-bit per-round keys Kn by permutating CnDn, 1 <= n <= 16
         int[][] kn = new int[16][48];
@@ -145,6 +100,61 @@ public class Crypto {
         p_k[51] = key[4];  p_k[52] = key[27]; p_k[53] = key[19];
         p_k[54] = key[11]; p_k[55] = key[3];
         return p_k;
+    }
+
+    /**
+     * This method generates 16 blocks CnDn, 1 <= n <= 16,
+     * used to generate the per-round keys for DES.
+     * <p>
+     * The 56-bit permutated key p_k is split into 2 halves C0 and D0.
+     * Cn and Dn, 1 <= n <= 16, are blocks generated from the previous pair,
+     * Cn-1 and Dn-1, using a series of left-shifts of the previous blocks.
+     *
+     * @param p_k the permutated key
+     * @return    CnDn, 16 blocks generated from p_k
+     */
+    private static int[][] generateCnDn(int[] p_k) {
+        int[][] cn = new int[17][28]; // C0,C1...,C16
+        int[][] dn = new int[17][28]; // D0,D1,...,D16
+
+        System.arraycopy(p_k, 0, cn[0], 0, 28); // C0
+        System.arraycopy(p_k, 28, dn[0], 0, 28); // D0
+
+        for (byte i = 1; i < 17; i++) {
+            for (byte j = 0; j < 26; j++) {
+                if (i != 1 && i != 2 && i != 9 && i != 16) {
+                    // 2 left-shifts
+                    cn[i][j] = cn[i-1][j+2];
+                    dn[i][j] = dn[i-1][j+2];
+                } else {
+                    // 1 left-shift
+                    cn[i][j] = cn[i-1][j+1];
+                    dn[i][j] = dn[i-1][j+1];
+                }
+            }
+            // Move bits that were in the front to the back after left-shifts
+            if (i != 1 && i != 2 && i != 9 && i != 16) {
+                cn[i][26] = cn[i-1][0];
+                cn[i][27] = cn[i-1][1];
+                dn[i][26] = dn[i-1][0];
+                dn[i][27] = dn[i-1][1];
+            } else {
+                cn[i][26] = cn[i-1][27];
+                cn[i][27] = cn[i-1][0];
+                dn[i][26] = dn[i-1][27];
+                dn[i][27] = dn[i-1][0];
+            }
+        }
+
+        // Concatenate Cn and Dn into CnDn
+        int[][] cndn = new int[16][56];
+        for (byte i = 0; i < 16; i++) {
+            for (byte j = 0; j < 28; j++) {
+                cndn[i][j] = cn[i+1][j];
+                cndn[i][j+28] = dn[i+1][j];
+            }
+        }
+        return cndn;
     }
 
     /**
