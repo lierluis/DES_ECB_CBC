@@ -28,23 +28,26 @@ public class Crypto {
         p_k[51] = key[4];  p_k[52] = key[27]; p_k[53] = key[19];
         p_k[54] = key[11]; p_k[55] = key[3];
 
-        int[][] cn = new int[17][28]; // C0,C1...,C26
-        int[][] dn = new int[17][28]; // D0,D1,...,D26
-
-        // Split 56-bit permutated key p_k into 2 halves cn[0] and dn[0]
-        System.arraycopy(p_k, 0, cn[0], 0, 28); // C0
-        System.arraycopy(p_k, 28, dn[0], 0, 28); // D0
-
+        // Split 56-bit permutated key p_k into 2 halves C0 and D0.
         // Cn and Dn, 1 <= n <= 16, stored as cn[1...16] and dn[1...16],
         // respectively, are blocks from from the previous pair Cn-1 and Dn-1,
         // respectively, using a series of left-shifts of the previous blocks.
+
+        int[][] cn = new int[17][28]; // C0,C1...,C26
+        int[][] dn = new int[17][28]; // D0,D1,...,D26
+
+        System.arraycopy(p_k, 0, cn[0], 0, 28); // C0
+        System.arraycopy(p_k, 28, dn[0], 0, 28); // D0
+
         for (byte i = 1; i < 17; i++) {
             for (byte j = 0; j < 26; j++) {
                 if (i != 1 && i != 2 && i != 9 && i != 16) {
-                    cn[i][j] = cn[i-1][j+2]; // 2 left-shifts
+                    // 2 left-shifts
+                    cn[i][j] = cn[i-1][j+2];
                     dn[i][j] = dn[i-1][j+2];
                 } else {
-                    cn[i][j] = cn[i-1][j+1]; // 1 left-shift
+                    // 1 left-shift
+                    cn[i][j] = cn[i-1][j+1];
                     dn[i][j] = dn[i-1][j+1];
                 }
             }
