@@ -5,6 +5,12 @@
 
 public class Crypto {
 
+    /**
+     * This method 16 per-round keys for the DES algorithm.
+     *
+     * @param key an int[] array containing the 64-bit key in binary
+     * @return    an int[][] 2d array contianing 16 48-bit per-round keys
+     */
     public static int[][] generatePerRoundKeys(int[] key) {
         // Permutate key (only uses 56 useful bits)
         int[] p_k = new int[56];
@@ -106,6 +112,13 @@ public class Crypto {
         return kn;
     }
 
+    /**
+     * This method performs the encoding logic for the DES algorithm.
+     *
+     * @param plaintext the text in binary to be encrypted
+     * @param kn        the per-round keys in binary
+     * @return          the ciphertext in binary
+     */
     public static int[] encodeData(int[] plaintext, int[][] kn) {
         // Initial permutation (IP) of plaintext
         int[] IP = new int[64];
@@ -172,7 +185,17 @@ public class Crypto {
         return ciphertext; // finally!
     }
 
-    /** this method implements the DES encryption algorithm */
+    /**
+     * This method implements the DES encryption algorithm.
+     * <p>
+     * DES operates on 64-bit plaintext blocks and returns ciphertext blocks of
+     * the same size. It does so using key sizes of 56-bits. The keys are
+     * stored as 64-bit but every 8th bit in the key is not used.
+     *
+     * @param plaintext the 64-bit plaintext in binary to be encrypted
+     * @param key       the 56-bit key stored as 64-bit in binary
+     * @return          the 64-bit ciphertext in binary
+     */
     public static int[] DES(int[] plaintext, int[] key) {
         if (plaintext.length != 64 || key.length != 64) {
             System.err.println("Size not 64");
@@ -185,7 +208,13 @@ public class Crypto {
         return ciphertext;
     }
 
-    /** mangler function */
+    /**
+     * This function performs the mangler function.
+     *
+     * @param block Rn-1
+     * @param key   Kn
+     * @return      result of mangler function
+     */
     static int[] mangler(int[] block, int[] key) {
 
         // Expand each block Rn-1 from 32 bits to 48 bits
@@ -301,8 +330,11 @@ public class Crypto {
     }
 
     /**
-     * this method expands 32-bit blocks to 48 bits for the mangler function
+     * This method expands 32-bit blocks to 48 bits for the mangler function
      * based on an E-bit selection table
+     *
+     * @param arr the 32-bit block in binary
+     * @return    the 48-bit block in binary
      */
     static int[] E(int[] arr) {
 
