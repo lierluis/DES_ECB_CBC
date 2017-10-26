@@ -29,7 +29,7 @@ public class Crypto {
     }
 
     /**
-     * This method 16 per-round keys for the DES algorithm.
+     * This method generates 16 per-round keys for the DES algorithm.
      *
      * @param key an int[] array containing the 64-bit key in binary
      * @return    an int[][] 2d array contianing 16 48-bit per-round keys
@@ -40,9 +40,8 @@ public class Crypto {
         return permutateCnDn(cndn);
     }
 
-    // Permutate key (only uses 56 useful bits)
     /**
-     * This method permutates the main key (only uses 56 useful bits)
+     * This method permutates the main key (only uses 56 useful bits).
      *
      * @param key the main key for DES
      * @return    the permutated key p_k
