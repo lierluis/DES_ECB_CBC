@@ -6,7 +6,7 @@
 public class Crypto {
 
     public static int[][] generatePerRoundKeys(int[] key) {
-        // permutate key (only uses 56 useful bits)
+        // Permutate key (only uses 56 useful bits)
         int[] p_k = new int[56];
         p_k[0]  = key[56]; p_k[1]  = key[48]; p_k[2]  = key[40];
         p_k[3]  = key[32]; p_k[4]  = key[24]; p_k[5]  = key[16];
@@ -48,7 +48,7 @@ public class Crypto {
                     dn[i][j] = dn[i-1][j+1];
                 }
             }
-            // move bits that were in the front to the back after left-shifts
+            // Move bits that were in the front to the back after left-shifts
             if (i != 1 && i != 2 && i != 9 && i != 16) {
                 cn[i][26] = cn[i-1][0];
                 cn[i][27] = cn[i-1][1];
@@ -62,7 +62,7 @@ public class Crypto {
             }
         }
 
-        // concatenate cn and dn into cndn, removing bits 9, 18, 22, 25
+        // Concatenate Cn and Dn into CnDn
         int[][] cndn = new int[16][56];
         for (byte i = 0; i < 16; i++) {
             for (byte j = 0; j < 28; j++) {
@@ -71,8 +71,8 @@ public class Crypto {
             }
         }
 
-        // generate per-round keys by permutating cndn
-        int[][] kn = new int[16][48]; // 16 48-bit keys
+        // Generate 16 48-bit per-round keys Kn by permutating CnDn, 1 <= n <= 16
+        int[][] kn = new int[16][48];
         for (byte i = 0; i < 16; i++) {
             kn[i][0]  = cndn[i][13]; kn[i][1]  = cndn[i][16];
             kn[i][2]  = cndn[i][10]; kn[i][3]  = cndn[i][23];
