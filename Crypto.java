@@ -247,36 +247,23 @@ public class Crypto {
     }
 
     /**
-     * This function performs the mangler function.
+     * This method performs the mangler function.
+     * <p>
+     * See performDESRounds() for more information.
      *
-     * @param block Rn-1
-     * @param key   Kn
+     * @param block 32-bit blocks Rn-1
+     * @param key   16-bit keys Kn
      * @return      result of mangler function
      */
     private static int[] mangler(int[] block, int[] key) {
-
-        // Expand each 32-bit block Rn-1 to 48 bits based on E-bit selection table
-
-        // E(Rn-1)
-        int[] E = new int[48];
-        E[0] = block[31];
-        for (byte i = 1;  i < 6;  i++) E[i] = block[i-1];
-        for (byte i = 6;  i < 12; i++) E[i] = block[i-3];
-        for (byte i = 12; i < 18; i++) E[i] = block[i-5];
-        for (byte i = 18; i < 24; i++) E[i] = block[i-7];
-        for (byte i = 24; i < 30; i++) E[i] = block[i-9];
-        for (byte i = 30; i < 36; i++) E[i] = block[i-11];
-        for (byte i = 36; i < 42; i++) E[i] = block[i-13];
-        for (byte i = 42; i < 47; i++) E[i] = block[i-15];
-        E[47] = block[0];
+        int[] E = expandBlock(block); // E(Rn-1)
 
         // result = Kn XOR E(Rn-1)
+        // B = result split into 8 groups of 6 bits
         int[] result = new int[48];
         for (byte i = 0; i < 48; i++) {
             result[i] = E[i] ^ key[i];
         }
-
-        // Split result into 8 groups of 6 bits
         int[][] B = new int[8][6];
         for (int i = 0; i < 8; i++) {
             System.arraycopy(result, i*6, B[i], 0, 6);
@@ -377,6 +364,24 @@ public class Crypto {
         m_result[30] = sbox_output[3];  m_result[31] = sbox_output[24];
 
         return m_result;
+    }
+
+    /**
+     * This method expands 32-bit block Rn-1 to 48 bits based on E-bit selection table
+     */
+    private static int[] expandBlock(int[] block) {
+        int[] E = new int[48];
+        E[0] = block[31];
+        for (byte i = 1;  i < 6;  i++) E[i] = block[i-1];
+        for (byte i = 6;  i < 12; i++) E[i] = block[i-3];
+        for (byte i = 12; i < 18; i++) E[i] = block[i-5];
+        for (byte i = 18; i < 24; i++) E[i] = block[i-7];
+        for (byte i = 24; i < 30; i++) E[i] = block[i-9];
+        for (byte i = 30; i < 36; i++) E[i] = block[i-11];
+        for (byte i = 36; i < 42; i++) E[i] = block[i-13];
+        for (byte i = 42; i < 47; i++) E[i] = block[i-15];
+        E[47] = block[0];
+        return E;
     }
 
     /** this method implements the ECB encryption algorithm */
