@@ -166,18 +166,7 @@ public class Crypto {
      * @return          the ciphertext in binary
      */
     private static int[] encodeData(int[] plaintext, int[][] kn) {
-        // Initial permutation (IP) of plaintext
-        int[] IP = new int[64];
-        for (byte i = 0; i < 8; i++) {
-            IP[(8*5) - (i+1)] = plaintext[(8*i) + 0]; // A
-            IP[(8*1) - (i+1)] = plaintext[(8*i) + 1]; // B
-            IP[(8*6) - (i+1)] = plaintext[(8*i) + 2]; // C
-            IP[(8*2) - (i+1)] = plaintext[(8*i) + 3]; // D
-            IP[(8*7) - (i+1)] = plaintext[(8*i) + 4]; // E
-            IP[(8*3) - (i+1)] = plaintext[(8*i) + 5]; // F
-            IP[(8*8) - (i+1)] = plaintext[(8*i) + 6]; // G
-            IP[(8*4) - (i+1)] = plaintext[(8*i) + 7]; // H
-        }
+        int[] IP = plaintextInitialPermutation(plaintext);
 
         // Divide IP into 32-bit halves L0 and R0.
         //
@@ -229,6 +218,24 @@ public class Crypto {
         }
 
         return ciphertext;
+    }
+
+    /**
+     * This function performs an initial permutation (IP) on the plaintext message.
+     */
+    private static int[] plaintextInitialPermutation(int[] plaintext) {
+        int[] IP = new int[64];
+        for (byte i = 0; i < 8; i++) {
+            IP[(8*5) - (i+1)] = plaintext[(8*i) + 0]; // A
+            IP[(8*1) - (i+1)] = plaintext[(8*i) + 1]; // B
+            IP[(8*6) - (i+1)] = plaintext[(8*i) + 2]; // C
+            IP[(8*2) - (i+1)] = plaintext[(8*i) + 3]; // D
+            IP[(8*7) - (i+1)] = plaintext[(8*i) + 4]; // E
+            IP[(8*3) - (i+1)] = plaintext[(8*i) + 5]; // F
+            IP[(8*8) - (i+1)] = plaintext[(8*i) + 6]; // G
+            IP[(8*4) - (i+1)] = plaintext[(8*i) + 7]; // H
+        }
+        return IP;
     }
 
     /**
