@@ -169,7 +169,7 @@ public class Crypto {
             R16L16[i+32] = Ln[16][i];
         }
 
-        // we apply a final permutation to R16L16 to obtain the DES ciphertext
+        // Apply a final permutation to R16L16 to obtain the DES ciphertext
         int[] ciphertext = new int[64];
         for (byte i = 0; i < 8; i++) {
             ciphertext[(8*i) + 0] = R16L16[(8*5) - (i+1)]; // A
@@ -182,7 +182,7 @@ public class Crypto {
             ciphertext[(8*i) + 7] = R16L16[(8*4) - (i+1)]; // H
         }
 
-        return ciphertext; // finally!
+        return ciphertext;
     }
 
     /**
