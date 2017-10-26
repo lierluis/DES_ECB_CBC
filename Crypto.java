@@ -35,27 +35,8 @@ public class Crypto {
      * @return    an int[][] 2d array contianing 16 48-bit per-round keys
      */
     private static int[][] generatePerRoundKeys(int[] key) {
-        // Permutate key (only uses 56 useful bits)
-        int[] p_k = new int[56];
-        p_k[0]  = key[56]; p_k[1]  = key[48]; p_k[2]  = key[40];
-        p_k[3]  = key[32]; p_k[4]  = key[24]; p_k[5]  = key[16];
-        p_k[6]  = key[8];  p_k[7]  = key[0];  p_k[8]  = key[57];
-        p_k[9]  = key[49]; p_k[10] = key[41]; p_k[11] = key[33];
-        p_k[12] = key[25]; p_k[13] = key[17]; p_k[14] = key[9];
-        p_k[15] = key[1];  p_k[16] = key[58]; p_k[17] = key[50];
-        p_k[18] = key[42]; p_k[19] = key[34]; p_k[20] = key[26];
-        p_k[21] = key[18]; p_k[22] = key[10]; p_k[23] = key[2];
-        p_k[24] = key[59]; p_k[25] = key[51]; p_k[26] = key[43];
-        p_k[27] = key[35]; p_k[28] = key[62]; p_k[29] = key[54];
-        p_k[30] = key[46]; p_k[31] = key[38]; p_k[32] = key[30];
-        p_k[33] = key[22]; p_k[34] = key[14]; p_k[35] = key[6];
-        p_k[36] = key[61]; p_k[37] = key[53]; p_k[38] = key[45];
-        p_k[39] = key[37]; p_k[40] = key[29]; p_k[41] = key[21];
-        p_k[42] = key[13]; p_k[43] = key[5];  p_k[44] = key[60];
-        p_k[45] = key[52]; p_k[46] = key[44]; p_k[47] = key[36];
-        p_k[48] = key[28]; p_k[49] = key[20]; p_k[50] = key[12];
-        p_k[51] = key[4];  p_k[52] = key[27]; p_k[53] = key[19];
-        p_k[54] = key[11]; p_k[55] = key[3];
+
+        int[] p_k = permutateKey(key);
 
         // Split 56-bit permutated key p_k into 2 halves C0 and D0.
         // Cn and Dn, 1 <= n <= 16, stored as cn[1...16] and dn[1...16],
@@ -133,6 +114,37 @@ public class Crypto {
         }
 
         return kn;
+    }
+
+    // Permutate key (only uses 56 useful bits)
+    /**
+     * This method permutates the main key (only uses 56 useful bits)
+     *
+     * @param key the main key for DES
+     * @return    the permutated key p_k
+     */
+    private static int[] permutateKey(int[] key) {
+        int[] p_k = new int[56];
+        p_k[0]  = key[56]; p_k[1]  = key[48]; p_k[2]  = key[40];
+        p_k[3]  = key[32]; p_k[4]  = key[24]; p_k[5]  = key[16];
+        p_k[6]  = key[8];  p_k[7]  = key[0];  p_k[8]  = key[57];
+        p_k[9]  = key[49]; p_k[10] = key[41]; p_k[11] = key[33];
+        p_k[12] = key[25]; p_k[13] = key[17]; p_k[14] = key[9];
+        p_k[15] = key[1];  p_k[16] = key[58]; p_k[17] = key[50];
+        p_k[18] = key[42]; p_k[19] = key[34]; p_k[20] = key[26];
+        p_k[21] = key[18]; p_k[22] = key[10]; p_k[23] = key[2];
+        p_k[24] = key[59]; p_k[25] = key[51]; p_k[26] = key[43];
+        p_k[27] = key[35]; p_k[28] = key[62]; p_k[29] = key[54];
+        p_k[30] = key[46]; p_k[31] = key[38]; p_k[32] = key[30];
+        p_k[33] = key[22]; p_k[34] = key[14]; p_k[35] = key[6];
+        p_k[36] = key[61]; p_k[37] = key[53]; p_k[38] = key[45];
+        p_k[39] = key[37]; p_k[40] = key[29]; p_k[41] = key[21];
+        p_k[42] = key[13]; p_k[43] = key[5];  p_k[44] = key[60];
+        p_k[45] = key[52]; p_k[46] = key[44]; p_k[47] = key[36];
+        p_k[48] = key[28]; p_k[49] = key[20]; p_k[50] = key[12];
+        p_k[51] = key[4];  p_k[52] = key[27]; p_k[53] = key[19];
+        p_k[54] = key[11]; p_k[55] = key[3];
+        return p_k;
     }
 
     /**
