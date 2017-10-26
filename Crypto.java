@@ -120,17 +120,29 @@ public class Crypto {
             IP[(8*4) - (i+1)] = plaintext[(8*i) + 7]; // H
         }
 
-        // DES rounds: generate 32-bit Ln and Rn, 1 <= n <= 16
+        // Divide IP into 32-bit halves L0 and R0.
+        //
+        // DES rounds: generate 32-bit Ln and Rn, 1 <= n <= 16, using
+        // a mangler function that operates on data blocks of 32 bits
+        // and keys of 48 bits to produce a block of 32 bits.
+        //
+        // Calculating Ln and Rn:
+        //   Step 1. Ln = Rn-1
+        //   Step 2. Rn = Ln-1 XOR mangler_function(Rn-1, Kn)
+
         int[][] Ln = new int[17][32];
         int[][] Rn = new int[17][32];
+
         System.arraycopy(IP, 0, Ln[0], 0, 32); // L0
         System.arraycopy(IP, 32, Rn[0], 0, 32); // R0
+
         int[][] mangler_result = new int[16][32];
 
         for (byte i = 1; i < 17; i++) {
-            Ln[i] = Rn[i-1]; // Ln = Rn-1
+            // Step 1
+            Ln[i] = Rn[i-1];
 
-            // Rn = Ln-1 XOR mangler(Rn-1, Kn)
+            // Step 2
             mangler_result[i-1] = mangler(Rn[i-1], kn[i-1]);
             for (byte j = 0; j < 32; j++) {
                 Rn[i][j] = Ln[i-1][j] ^ mangler_result[i-1][j];
@@ -176,20 +188,26 @@ public class Crypto {
     /** mangler function */
     static int[] mangler(int[] block, int[] key) {
 
-        int[] E_block = E(block); // expand block to 48 bits
+        // Expand each block Rn-1 from 32 bits to 48 bits
+        int[] E_block = E(block); // E(Rn-1)
 
-        int[] result = new int[48]; // result = Kn XOR E(Rn-1)
+        // result = Kn XOR E(Rn-1)
+        int[] result = new int[48];
         for (byte i = 0; i < 48; i++) {
             result[i] = E_block[i] ^ key[i];
         }
 
-        // 8 groups of 6 bits are used as addresses to S-boxes
+        // Split result into 8 groups of 6 bits
         int[][] B = new int[8][6];
         for (int i = 0; i < 8; i++) {
             System.arraycopy(result, i*6, B[i], 0, 6);
         }
 
-        // translate each 6 bits of B into rows and columns of S-boxes
+        // Each of the 8 groups of 6 bits will be used as addresses to
+        // tables known as "S-boxes", where 4-bit numbers are located.
+        // Each group of 6 bits will be transformed into these 4-bit numbers.
+
+        // Translate each 6 bits of B into rows and columns of S-boxes
         String[] rows_bin = new String[8];
         String[] cols_bin = new String[8];
         for (byte i = 0; i < 8; i++) {
@@ -197,7 +215,7 @@ public class Crypto {
             cols_bin[i] = "" + B[i][1] + B[i][2] + B[i][3] + B[i][4]; // 4 inner
         }
 
-        // translate rows and columns to decimal
+        // Translate String rows and columns to decimal
         int[] rows_dec = new int[8];
         int[] cols_dec = new int[8];
         for (byte i = 0; i < 8; i++) {
@@ -205,7 +223,7 @@ public class Crypto {
             cols_dec[i] = Integer.parseInt(cols_bin[i], 2);
         }
 
-        // each value in B will be an index to each S-box for a certain value
+        // Each value in B will be an index to each S-box for a certain value
         byte[][][] SBOX = {
             { {14,4,13,1,2,15,11,8,3,10,6,12,5,9,0,7},
                 {0,15,7,4,14,2,13,1,10,6,12,11,9,5,3,8},
@@ -243,8 +261,7 @@ public class Crypto {
         // S-box values are found in decimal, then converted to binary strings
         String[] sbox_values = new String[8];
         for (byte i = 0; i < 8; i++) {
-            sbox_values[i] =
-                    Integer.toBinaryString(SBOX[i][rows_dec[i]][cols_dec[i]]);
+            sbox_values[i] = Integer.toBinaryString(SBOX[i][rows_dec[i]][cols_dec[i]]);
         }
         for (byte i = 0; i < 8; i++) {
             while (sbox_values[i].length() < 4) {
@@ -261,7 +278,7 @@ public class Crypto {
             }
         }
 
-        // permutate the S-box output to get the result of the mangler function
+        // Permutate the S-box output to get the result of the mangler function
         int[] m_result = new int[32];
         m_result[0]  = sbox_output[15]; m_result[1]  = sbox_output[6];
         m_result[2]  = sbox_output[19]; m_result[3]  = sbox_output[20];
@@ -283,7 +300,10 @@ public class Crypto {
         return m_result;
     }
 
-    /** this method expands 32-bit blocks to 48 bits for the mangler function */
+    /**
+     * this method expands 32-bit blocks to 48 bits for the mangler function
+     * based on an E-bit selection table
+     */
     static int[] E(int[] arr) {
 
         int[] E = new int[48];
