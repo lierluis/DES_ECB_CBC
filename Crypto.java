@@ -400,7 +400,9 @@ public class Crypto {
         return m_result;
     }
 
-    /** this method implements the ECB encryption algorithm */
+    /**
+     * This method implements the ECB block cipher mode.
+     */
     static int[] ECB(String plaintext, String key) {
         int[] p = string_to_binary(plaintext);
         int[] k_initial = string_to_binary(key);
@@ -432,19 +434,19 @@ public class Crypto {
             }
         }
 
-        // perform DES on all blocks
+        // Perform DES on all blocks
         int[][] encrypted_blocks = new int[pn.length][64];
         for (int i = 0; i < encrypted_blocks.length; i++) {
             encrypted_blocks[i] = DES(pn[i], k);
         }
 
-        // concatenate encrypted blocks into an array
+        // Concatenate encrypted blocks into an array
         int[] encrypted_arr = new int[encrypted_blocks.length*64];
         for (int i = 0; i < encrypted_arr.length / 64; i++) {
             System.arraycopy(encrypted_blocks[i], 0, encrypted_arr, (i*64), 64);
         }
 
-        // get 8-bit binary strings of ciphertext
+        // Get 8-bit binary strings of ciphertext
         String[] ciphertext_string = new String[encrypted_arr.length / 8];
         for (int i = 0; i < encrypted_arr.length / 8; i++) {
             ciphertext_string[i] = "";
@@ -463,7 +465,9 @@ public class Crypto {
         return ciphertext;
     }
 
-    /** this method implements the CBC encryption algorithm */
+    /**
+     * This method implements the CBC block cipher mode.
+     */
     static int[] CBC(String plaintext, String key, String IV) {
         int p[] = string_to_binary(plaintext);
         int k_initial[] = string_to_binary(key);
@@ -510,7 +514,7 @@ public class Crypto {
             }
         }
 
-        // encrypt result of the XOR to result in c1
+        // Encrypt result of the XOR to result in c1
         int[][] ci = new int[num_blocks][64];
         ci[0] = DES(first_xor[0], k);
 
@@ -523,7 +527,7 @@ public class Crypto {
             }
         }
 
-        // get 8-bit binary strings of ciphertext
+        // Get 8-bit binary strings of ciphertext
         int[] encrypted_arr = arr_2d_to_1d(ci);
         String[] ciphertext_string = new String[encrypted_arr.length / 8];
         for (int i = 0; i < encrypted_arr.length / 8; i++) {
@@ -533,7 +537,7 @@ public class Crypto {
             }
         }
 
-        // ciphertext is the binary strings converted to decimal integers
+        // Ciphertext is the binary strings converted to decimal integers
         int[] ciphertext = new int[ciphertext_string.length];
         for (int i = 0; i < ciphertext.length; i++) {
             int decimal = Integer.parseInt(ciphertext_string[i], 2);
@@ -543,17 +547,19 @@ public class Crypto {
         return ciphertext;
     }
 
-    /** this helper method converts strings into their binary representations */
+    /**
+     * This helper method converts strings into their binary representations
+     */
     static int[] string_to_binary(String str) {
-        int[] arr = new int[str.length()*8]; // array to be returned
+        int[] arr = new int[str.length()*8];
 
         for (int i = 0; i < str.length(); i++) {
-            // convert characters in key to binary strings
+            // Convert characters in key to binary strings
             String s = Integer.toBinaryString(str.charAt(i));
             while (s.length() < 8) {
                 s = "0" + s; // padding of binary strings
             }
-            // put each binary digit into p array
+            // Put each binary digit into array
             for (int j = 0; j < 8; j++) {
                 arr[j+(i*8)] = Integer.parseInt(s.substring(j, j+1));
             }
@@ -561,7 +567,9 @@ public class Crypto {
         return arr;
     }
 
-    /** this helper method returns a 1d equivalent array of a 2d array */
+    /**
+     * This helper method returns a 1d equivalent array of a 2d array
+     */
     static int[] arr_2d_to_1d(int[][] arr_2d) {
         int[] arr_1d = new int[arr_2d.length*arr_2d[0].length];
         for (byte i = 0; i < arr_2d.length; i++) {
@@ -572,7 +580,9 @@ public class Crypto {
         return arr_1d;
     }
 
-    /** this helper method returns a 2d equivalent array of a 1d array */
+    /**
+     * This helper method returns a 2d equivalent array of a 1d array
+     */
     static int[][] arr_1d_to_2d(int[] arr_1d) {
         int[][] arr_2d = new int[arr_1d.length/64][64];
         for (byte i = 0; i < arr_1d.length/64; i++) {
@@ -583,7 +593,9 @@ public class Crypto {
         return arr_2d;
     }
 
-    /** print 1d arrays */
+    /**
+     * This method prints 1d arrays with a custom look
+     */
     static void print(int[] arr) {
         for (int i = 0; i < arr.length; i++) {
             System.out.print(arr[i]);
@@ -608,7 +620,9 @@ public class Crypto {
         System.out.println();
     }
 
-    /** print 2d arrays */
+    /**
+     * This method prints 2d arrays
+     */
     static void print(int[][] arr) {
         for (int i = 0; i < arr.length; i++) {
             print(arr[i]);
