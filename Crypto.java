@@ -531,6 +531,7 @@ public class Crypto {
         p("DES");
         print(ciphertext_DES);
 
+        /*
         String plaintext_ECB_1 = "I LOVE SECURITY";
         String key_ECB_1 = "ABCDEFGH";
         String plaintext_ECB_2 = "GO GATORS!";
@@ -570,6 +571,7 @@ public class Crypto {
             System.out.print(ciphertext_CBC_2[i] + " ");
         }
         p("");
+        */
     }
 
 }
