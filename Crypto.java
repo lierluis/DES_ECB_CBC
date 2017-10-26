@@ -1,20 +1,17 @@
 /*
  * Author: Luis Estrada
- *  Class: CSC 650
  *   Date: 2/29/16
  */
 
-import java.util.Random;
-
 public class Crypto {
-    
+
     /** this method implements the DES encryption algorithm */
     public static int[] DES(int[] plaintext, int[] key) {
         if (plaintext.length != 64 || key.length != 64) {
             System.err.println("Size not 64");
             System.exit(1);
         }
-        
+
         // permutate key (only uses 56 useful bits)
         int[] p_k = new int[56];
         p_k[0]  = key[56]; p_k[1]  = key[48]; p_k[2]  = key[40];
@@ -36,13 +33,13 @@ public class Crypto {
         p_k[48] = key[28]; p_k[49] = key[20]; p_k[50] = key[12];
         p_k[51] = key[4];  p_k[52] = key[27]; p_k[53] = key[19];
         p_k[54] = key[11]; p_k[55] = key[3];
-        
+
         int[][] cn = new int[17][28]; // c0,c1...,c26
         int[][] dn = new int[17][28]; // d0,d1,...,d26
-        
+
         System.arraycopy(p_k, 0, cn[0], 0, 28); // c0
         System.arraycopy(p_k, 28, dn[0], 0, 28); // d0
-        
+
         for (byte i = 1; i < 17; i++) {
             for (byte j = 0; j < 26; j++) {
                 if (i != 1 && i != 2 && i != 9 && i != 16) {
@@ -66,7 +63,7 @@ public class Crypto {
                 dn[i][27] = dn[i-1][0];
             }
         }
-        
+
         // concatenate cn and dn into cndn, removing bits 9, 18, 22, 25
         int[][] cndn = new int[16][56];
         for (byte i = 0; i < 16; i++) {
@@ -75,7 +72,7 @@ public class Crypto {
                 cndn[i][j+28] = dn[i+1][j];
             }
         }
-        
+
         // generate per-round keys by permutating cndn
         int[][] kn = new int[16][48]; // 16 48-bit keys
         for (byte i = 0; i < 16; i++) {
@@ -104,7 +101,7 @@ public class Crypto {
             kn[i][44] = cndn[i][49]; kn[i][45] = cndn[i][35];
             kn[i][46] = cndn[i][28]; kn[i][47] = cndn[i][31];
         }
-        
+
         // initial permutation of plaintext
         int[] IP = new int[64];
         for (byte i = 0; i < 8; i++) {
@@ -117,31 +114,31 @@ public class Crypto {
             IP[(8*8) - (i+1)] = plaintext[(8*i) + 6]; // G
             IP[(8*4) - (i+1)] = plaintext[(8*i) + 7]; // H
         }
-        
+
         // DES rounds: generate 32-bit Ln and Rn, 1 <= n <= 16
         int[][] Ln = new int[17][32];
         int[][] Rn = new int[17][32];
         System.arraycopy(IP, 0, Ln[0], 0, 32); // L0
         System.arraycopy(IP, 32, Rn[0], 0, 32); // R0
         int[][] mangler_result = new int[16][32];
-        
+
         for (byte i = 1; i < 17; i++) {
             Ln[i] = Rn[i-1]; // Ln = Rn-1
-            
+
             // Rn = Ln-1 XOR mangler(Rn-1, Kn)
             mangler_result[i-1] = mangler(Rn[i-1], kn[i-1]);
             for (byte j = 0; j < 32; j++) {
                 Rn[i][j] = Ln[i-1][j] ^ mangler_result[i-1][j];
             }
         }
-        
+
         // R16L16 holds the reversed final 64-bit block from the 16th DES round
         int[] R16L16 = new int[64];
         for (byte i = 0; i < 32; i++) {
             R16L16[i] = Rn[16][i];
-            R16L16[i+32] = Ln[16][i]; 
+            R16L16[i+32] = Ln[16][i];
         }
-        
+
         // we apply a final permutation to R16L16 to obtain the DES ciphertext
         int[] ciphertext = new int[64];
         for (byte i = 0; i < 8; i++) {
@@ -154,26 +151,26 @@ public class Crypto {
             ciphertext[(8*i) + 6] = R16L16[(8*8) - (i+1)]; // G
             ciphertext[(8*i) + 7] = R16L16[(8*4) - (i+1)]; // H
         }
-        
+
         return ciphertext; // finally!
     }
-    
+
     /** mangler function */
     static int[] mangler(int[] block, int[] key) {
-        
+
         int[] E_block = E(block); // expand block to 48 bits
-        
+
         int[] result = new int[48]; // result = Kn XOR E(Rn-1)
         for (byte i = 0; i < 48; i++) {
             result[i] = E_block[i] ^ key[i];
         }
-        
+
         // 8 groups of 6 bits are used as addresses to S-boxes
         int[][] B = new int[8][6];
         for (int i = 0; i < 8; i++) {
             System.arraycopy(result, i*6, B[i], 0, 6);
         }
-        
+
         // translate each 6 bits of B into rows and columns of S-boxes
         String[] rows_bin = new String[8];
         String[] cols_bin = new String[8];
@@ -181,7 +178,7 @@ public class Crypto {
             rows_bin[i] = "" + B[i][0] + B[i][5]; // 2 outer bits
             cols_bin[i] = "" + B[i][1] + B[i][2] + B[i][3] + B[i][4]; // 4 inner
         }
-        
+
         // translate rows and columns to decimal
         int[] rows_dec = new int[8];
         int[] cols_dec = new int[8];
@@ -189,7 +186,7 @@ public class Crypto {
             rows_dec[i] = Integer.parseInt(rows_bin[i], 2);
             cols_dec[i] = Integer.parseInt(cols_bin[i], 2);
         }
-        
+
         // each value in B will be an index to each S-box for a certain value
         byte[][][] SBOX = {
             { {14,4,13,1,2,15,11,8,3,10,6,12,5,9,0,7},
@@ -224,7 +221,7 @@ public class Crypto {
                 {1,15,13,8,10,3,7,4,12,5,6,11,0,14,9,2},
                 {7,11,4,1,9,12,14,2,0,6,10,13,15,3,5,8},
                 {2,1,14,7,4,10,8,13,15,12,9,0,3,5,6,11} } };
-        
+
         // S-box values are found in decimal, then converted to binary strings
         String[] sbox_values = new String[8];
         for (byte i = 0; i < 8; i++) {
@@ -236,7 +233,7 @@ public class Crypto {
                 sbox_values[i] = "0" + sbox_values[i]; // padding
             }
         }
-        
+
         // S-box output is an array of bits
         int[] sbox_output = new int[32];
         for (byte i = 0; i < 8; i++) {
@@ -245,7 +242,7 @@ public class Crypto {
                         Integer.parseInt(sbox_values[i].substring(j,j+1));
             }
         }
-        
+
         // permutate the S-box output to get the result of the mangler function
         int[] m_result = new int[32];
         m_result[0]  = sbox_output[15]; m_result[1]  = sbox_output[6];
@@ -264,13 +261,13 @@ public class Crypto {
         m_result[26] = sbox_output[29]; m_result[27] = sbox_output[5];
         m_result[28] = sbox_output[21]; m_result[29] = sbox_output[10];
         m_result[30] = sbox_output[3];  m_result[31] = sbox_output[24];
-        
+
         return m_result;
     }
-    
+
     /** this method expands 32-bit blocks to 48 bits for the mangler function */
     static int[] E(int[] arr) {
-        
+
         int[] E = new int[48];
         E[0] = arr[31];
         for (byte i = 1;  i < 6;  i++) E[i] = arr[i-1];
@@ -282,28 +279,27 @@ public class Crypto {
         for (byte i = 36; i < 42; i++) E[i] = arr[i-13];
         for (byte i = 42; i < 47; i++) E[i] = arr[i-15];
         E[47] = arr[0];
-        
+
         return E;
     }
-    
-    
+
     /** this method implements the ECB encryption algorithm */
     static int[] ECB(String plaintext, String key) {
         int[] p = string_to_binary(plaintext);
         int[] k_initial = string_to_binary(key);
         int[] k = new int[64];
-        
+
         if (k_initial.length < 64) {
             System.err.println("Size of key is less than 64");
             System.exit(1);
         } else { // use only first 64 bits of key
             System.arraycopy(k_initial, 0, k, 0, 64);
         }
-        
+
         int full_blocks = p.length / 64;
-        
+
         int[][] pn; // pn holds 64-bit blocks to be put through DES algorithm
-        
+
         if (p.length % 64 > 0) { // if a block is less than 64-bits
             pn = new int[full_blocks+1][64];
             for (int i = 0; i < pn.length-1; i++) {
@@ -311,26 +307,26 @@ public class Crypto {
             }
             // save last block; System.arraycopy() adds padding to last block
             System.arraycopy(p,full_blocks*64, pn[pn.length-1],0, p.length%64);
-            
+
         } else { // if all blocks are 64-bits
             pn = new int[full_blocks][64];
             for (int i = 0; i < pn.length; i++) {
                 System.arraycopy(p, (i*64), pn[i], 0, 64);
             }
         }
-        
+
         // perform DES on all blocks
         int[][] encrypted_blocks = new int[pn.length][64];
         for (int i = 0; i < encrypted_blocks.length; i++) {
             encrypted_blocks[i] = DES(pn[i], k);
         }
-        
+
         // concatenate encrypted blocks into an array
         int[] encrypted_arr = new int[encrypted_blocks.length*64];
         for (int i = 0; i < encrypted_arr.length / 64; i++) {
             System.arraycopy(encrypted_blocks[i], 0, encrypted_arr, (i*64), 64);
         }
-        
+
         // get 8-bit binary strings of ciphertext
         String[] ciphertext_string = new String[encrypted_arr.length / 8];
         for (int i = 0; i < encrypted_arr.length / 8; i++) {
@@ -339,17 +335,17 @@ public class Crypto {
                 ciphertext_string[i] += encrypted_arr[(i*8)+j];
             }
         }
-        
+
         // ciphertext is the binary strings converted to decimal integers
         int[] ciphertext = new int[ciphertext_string.length];
         for (int i = 0; i < ciphertext.length; i++) {
             int decimal = Integer.parseInt(ciphertext_string[i], 2);
             ciphertext[i] = decimal;
         }
-        
+
         return ciphertext;
     }
-    
+
     /** this method implements the CBC encryption algorithm */
     static int[] CBC(String plaintext, String key, String IV) {
         int p[] = string_to_binary(plaintext);
@@ -357,7 +353,7 @@ public class Crypto {
         int iv_initial[] = string_to_binary(IV);
         int k[] = new int[64];
         int iv[] = new int[64];
-        
+
         if (k_initial.length < 64 || iv_initial.length < 64) {
             System.err.println("Size of key or IV is less than 64");
             System.exit(1);
@@ -365,29 +361,29 @@ public class Crypto {
             System.arraycopy(k_initial, 0, k, 0, 64);
             System.arraycopy(iv_initial, 0, iv, 0, 64);
         }
-        
+
         int full_blocks = p.length / 64;
         int num_blocks = full_blocks;
-        
+
         int[][] pn; // pn holds 64-bit blocks to be put through DES algorithm
-        
+
         if (p.length % 64 > 0) { // if a block is less than 64-bits
             num_blocks += 1;
-            
+
             pn = new int[full_blocks+1][64];
             for (int i = 0; i < pn.length-1; i++) {
                 System.arraycopy(p, (i*64), pn[i], 0, 64); // save full blocks
             }
             // save last block; System.arraycopy() adds padding to last block
             System.arraycopy(p,full_blocks*64, pn[pn.length-1],0, p.length%64);
-            
+
         } else { // if all blocks are 64-bits
             pn = new int[full_blocks][64];
             for (int i = 0; i < pn.length; i++) {
                 System.arraycopy(p, (i*64), pn[i], 0, 64);
             }
         }
-        
+
         // XOR Initialization Vector with first block of plaintext
         int[][] iv_2d = arr_1d_to_2d(iv);
         int[][] first_xor = new int[1][64];
@@ -396,11 +392,11 @@ public class Crypto {
                 first_xor[i][j] = iv_2d[i][j] ^ pn[0][j];
             }
         }
-        
+
         // encrypt result of the XOR to result in c1
         int[][] ci = new int[num_blocks][64];
         ci[0] = DES(first_xor[0], k);
-        
+
         // XOR each ci with the next plaintext block, then encrypt each with DES
         int[][] xor = new int[num_blocks-1][64];
         for (int i = 1; i < num_blocks; i++) {
@@ -409,7 +405,7 @@ public class Crypto {
                 ci[i] = DES(xor[i-1], k);
             }
         }
-        
+
         // get 8-bit binary strings of ciphertext
         int[] encrypted_arr = arr_2d_to_1d(ci);
         String[] ciphertext_string = new String[encrypted_arr.length / 8];
@@ -419,21 +415,21 @@ public class Crypto {
                 ciphertext_string[i] += encrypted_arr[(i*8)+j];
             }
         }
-        
+
         // ciphertext is the binary strings converted to decimal integers
         int[] ciphertext = new int[ciphertext_string.length];
         for (int i = 0; i < ciphertext.length; i++) {
             int decimal = Integer.parseInt(ciphertext_string[i], 2);
             ciphertext[i] = decimal;
         }
-        
+
         return ciphertext;
     }
-    
+
     /** this helper method converts strings into their binary representations */
     static int[] string_to_binary(String str) {
         int[] arr = new int[str.length()*8]; // array to be returned
-        
+
         for (int i = 0; i < str.length(); i++) {
             // convert characters in key to binary strings
             String s = Integer.toBinaryString(str.charAt(i));
@@ -447,9 +443,9 @@ public class Crypto {
         }
         return arr;
     }
-    
+
     /** this helper method returns a 1d equivalent array of a 2d array */
-    static int[] arr_2d_to_1d(int[][] arr_2d) {        
+    static int[] arr_2d_to_1d(int[][] arr_2d) {
         int[] arr_1d = new int[arr_2d.length*arr_2d[0].length];
         for (byte i = 0; i < arr_2d.length; i++) {
             for (byte j = 0; j < arr_2d[0].length; j++) {
@@ -458,6 +454,7 @@ public class Crypto {
         }
         return arr_1d;
     }
+
     /** this helper method returns a 2d equivalent array of a 1d array */
     static int[][] arr_1d_to_2d(int[] arr_1d) {
         int[][] arr_2d = new int[arr_1d.length/64][64];
@@ -488,7 +485,6 @@ public class Crypto {
             } else if (arr.length == 8) {
                 if ((i+1) % 1 == 0) System.out.print(" ");
             } else {
-                //System.out.println();  
                 if ((i+1) % 8 == 0) System.out.print(" ");
             }
         }
@@ -502,7 +498,7 @@ public class Crypto {
         }
         System.out.println();
     }
-    
+
     /** I'm lazy, ok? */
     static void p(String s) {
         System.out.println(s);
@@ -521,40 +517,40 @@ public class Crypto {
         int[] ciphertext_DES = DES(plaintext_DES, key_DES);
         p("DES");
         print(ciphertext_DES);
-        
+
         String plaintext_ECB_1 = "I LOVE SECURITY";
         String key_ECB_1 = "ABCDEFGH";
         String plaintext_ECB_2 = "GO GATORS!";
         String key_ECB_2 = "ABCDEFGH";
-        
+
         p("ECB_1");
         int[] ciphertext_ECB_1 = ECB(plaintext_ECB_1, key_ECB_1);
         for (int i = 0; i < ciphertext_ECB_1.length; i++) {
             System.out.print(ciphertext_ECB_1[i] + " ");
         }
         p("");
-        
+
         p("ECB_2");
         int[] ciphertext_ECB_2 = ECB(plaintext_ECB_2, key_ECB_2);
         for (int i = 0; i < ciphertext_ECB_2.length; i++) {
             System.out.print(ciphertext_ECB_2[i] + " ");
         }
         p("");
-        
+
         String plaintext_CBC_1 = "I LOVE SECURITY";
         String key_CBC_1 = "ABCDEFGH";
         String IV_1 = "ABCDEFGH";
         String plaintext_CBC_2 = "SECURITYSECURITY";
         String key_CBC_2 = "ABCDEFGH";
         String IV_2 = "ABCDEFGH";
-        
+
         p("CBC_1");
         int[] ciphertext_CBC = CBC(plaintext_CBC_1, key_CBC_1, IV_1);
         for (int i = 0; i < ciphertext_CBC.length; i++) {
             System.out.print(ciphertext_CBC[i] + " ");
         }
         p("");
-        
+
         p("CBC_2");
         int[] ciphertext_CBC_2 = CBC(plaintext_CBC_2, key_CBC_2, IV_2);
         for (int i = 0; i < ciphertext_CBC_2.length; i++) {
@@ -562,5 +558,5 @@ public class Crypto {
         }
         p("");
     }
-    
+
 }
