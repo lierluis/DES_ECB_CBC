@@ -103,16 +103,8 @@ public class Crypto {
         return kn;
     }
 
-    /** this method implements the DES encryption algorithm */
-    public static int[] DES(int[] plaintext, int[] key) {
-        if (plaintext.length != 64 || key.length != 64) {
-            System.err.println("Size not 64");
-            System.exit(1);
-        }
-
-        int[][] kn = generatePerRoundKeys(key);
-
-        // initial permutation of plaintext
+    public static int[] encodeData(int[] plaintext, int[][] kn) {
+        // Initial permutation (IP) of plaintext
         int[] IP = new int[64];
         for (byte i = 0; i < 8; i++) {
             IP[(8*5) - (i+1)] = plaintext[(8*i) + 0]; // A
@@ -163,6 +155,19 @@ public class Crypto {
         }
 
         return ciphertext; // finally!
+    }
+
+    /** this method implements the DES encryption algorithm */
+    public static int[] DES(int[] plaintext, int[] key) {
+        if (plaintext.length != 64 || key.length != 64) {
+            System.err.println("Size not 64");
+            System.exit(1);
+        }
+
+        int[][] kn = generatePerRoundKeys(key);
+        int[] ciphertext = encodeData(plaintext, kn);
+
+        return ciphertext;
     }
 
     /** mangler function */
