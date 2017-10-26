@@ -35,40 +35,9 @@ public class Crypto {
      * @return    an int[][] 2d array contianing 16 48-bit per-round keys
      */
     private static int[][] generatePerRoundKeys(int[] key) {
-
         int[] p_k = permutateKey(key);
         int[][] cndn = generateCnDn(p_k);
-
-        // Generate 16 48-bit per-round keys Kn by permutating CnDn, 1 <= n <= 16
-        int[][] kn = new int[16][48];
-        for (byte i = 0; i < 16; i++) {
-            kn[i][0]  = cndn[i][13]; kn[i][1]  = cndn[i][16];
-            kn[i][2]  = cndn[i][10]; kn[i][3]  = cndn[i][23];
-            kn[i][4]  = cndn[i][0];  kn[i][5]  = cndn[i][4];
-            kn[i][6]  = cndn[i][2];  kn[i][7]  = cndn[i][27];
-            kn[i][8]  = cndn[i][14]; kn[i][9]  = cndn[i][5];
-            kn[i][10] = cndn[i][20]; kn[i][11] = cndn[i][9];
-            kn[i][12] = cndn[i][22]; kn[i][13] = cndn[i][18];
-            kn[i][14] = cndn[i][11]; kn[i][15] = cndn[i][3];
-            kn[i][16] = cndn[i][25]; kn[i][17] = cndn[i][7];
-            kn[i][18] = cndn[i][15]; kn[i][19] = cndn[i][6];
-            kn[i][20] = cndn[i][26]; kn[i][21] = cndn[i][19];
-            kn[i][22] = cndn[i][12]; kn[i][23] = cndn[i][1];
-            kn[i][24] = cndn[i][40]; kn[i][25] = cndn[i][51];
-            kn[i][26] = cndn[i][30]; kn[i][27] = cndn[i][36];
-            kn[i][28] = cndn[i][46]; kn[i][29] = cndn[i][54];
-            kn[i][30] = cndn[i][29]; kn[i][31] = cndn[i][39];
-            kn[i][32] = cndn[i][50]; kn[i][33] = cndn[i][44];
-            kn[i][34] = cndn[i][32]; kn[i][35] = cndn[i][47];
-            kn[i][36] = cndn[i][43]; kn[i][37] = cndn[i][48];
-            kn[i][38] = cndn[i][38]; kn[i][39] = cndn[i][55];
-            kn[i][40] = cndn[i][33]; kn[i][41] = cndn[i][52];
-            kn[i][42] = cndn[i][45]; kn[i][43] = cndn[i][41];
-            kn[i][44] = cndn[i][49]; kn[i][45] = cndn[i][35];
-            kn[i][46] = cndn[i][28]; kn[i][47] = cndn[i][31];
-        }
-
-        return kn;
+        return permutateCnDn(cndn);
     }
 
     // Permutate key (only uses 56 useful bits)
@@ -155,6 +124,43 @@ public class Crypto {
             }
         }
         return cndn;
+    }
+
+    /**
+     * This method generates 16 48-bit per-round keys Kn by permutating CnDn.
+     *
+     * @param cndn 16 28-bit blocks used to generate per-round keys
+     * @return     16 48-bit per-round keys Kn
+     */
+    private static int[][] permutateCnDn(int[][] cndn) {
+        int[][] kn = new int[16][48];
+        for (byte i = 0; i < 16; i++) {
+            kn[i][0]  = cndn[i][13]; kn[i][1]  = cndn[i][16];
+            kn[i][2]  = cndn[i][10]; kn[i][3]  = cndn[i][23];
+            kn[i][4]  = cndn[i][0];  kn[i][5]  = cndn[i][4];
+            kn[i][6]  = cndn[i][2];  kn[i][7]  = cndn[i][27];
+            kn[i][8]  = cndn[i][14]; kn[i][9]  = cndn[i][5];
+            kn[i][10] = cndn[i][20]; kn[i][11] = cndn[i][9];
+            kn[i][12] = cndn[i][22]; kn[i][13] = cndn[i][18];
+            kn[i][14] = cndn[i][11]; kn[i][15] = cndn[i][3];
+            kn[i][16] = cndn[i][25]; kn[i][17] = cndn[i][7];
+            kn[i][18] = cndn[i][15]; kn[i][19] = cndn[i][6];
+            kn[i][20] = cndn[i][26]; kn[i][21] = cndn[i][19];
+            kn[i][22] = cndn[i][12]; kn[i][23] = cndn[i][1];
+            kn[i][24] = cndn[i][40]; kn[i][25] = cndn[i][51];
+            kn[i][26] = cndn[i][30]; kn[i][27] = cndn[i][36];
+            kn[i][28] = cndn[i][46]; kn[i][29] = cndn[i][54];
+            kn[i][30] = cndn[i][29]; kn[i][31] = cndn[i][39];
+            kn[i][32] = cndn[i][50]; kn[i][33] = cndn[i][44];
+            kn[i][34] = cndn[i][32]; kn[i][35] = cndn[i][47];
+            kn[i][36] = cndn[i][43]; kn[i][37] = cndn[i][48];
+            kn[i][38] = cndn[i][38]; kn[i][39] = cndn[i][55];
+            kn[i][40] = cndn[i][33]; kn[i][41] = cndn[i][52];
+            kn[i][42] = cndn[i][45]; kn[i][43] = cndn[i][41];
+            kn[i][44] = cndn[i][49]; kn[i][45] = cndn[i][35];
+            kn[i][46] = cndn[i][28]; kn[i][47] = cndn[i][31];
+        }
+        return kn;
     }
 
     /**
