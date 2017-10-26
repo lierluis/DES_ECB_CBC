@@ -6,6 +6,29 @@
 public class Crypto {
 
     /**
+     * This method implements the DES encryption algorithm.
+     * <p>
+     * DES operates on 64-bit plaintext blocks and returns ciphertext blocks of
+     * the same size. It does so using key sizes of 56-bits. The keys are
+     * stored as 64-bit but every 8th bit in the key is not used.
+     *
+     * @param plaintext the 64-bit plaintext in binary to be encrypted
+     * @param key       the 56-bit key stored as 64-bit in binary
+     * @return          the 64-bit ciphertext in binary
+     */
+    public static int[] DES(int[] plaintext, int[] key) {
+        if (plaintext.length != 64 || key.length != 64) {
+            System.err.println("Size not 64");
+            System.exit(1);
+        }
+
+        int[][] kn = generatePerRoundKeys(key);
+        int[] ciphertext = encodeData(plaintext, kn);
+
+        return ciphertext;
+    }
+
+    /**
      * This method 16 per-round keys for the DES algorithm.
      *
      * @param key an int[] array containing the 64-bit key in binary
@@ -186,29 +209,6 @@ public class Crypto {
     }
 
     /**
-     * This method implements the DES encryption algorithm.
-     * <p>
-     * DES operates on 64-bit plaintext blocks and returns ciphertext blocks of
-     * the same size. It does so using key sizes of 56-bits. The keys are
-     * stored as 64-bit but every 8th bit in the key is not used.
-     *
-     * @param plaintext the 64-bit plaintext in binary to be encrypted
-     * @param key       the 56-bit key stored as 64-bit in binary
-     * @return          the 64-bit ciphertext in binary
-     */
-    public static int[] DES(int[] plaintext, int[] key) {
-        if (plaintext.length != 64 || key.length != 64) {
-            System.err.println("Size not 64");
-            System.exit(1);
-        }
-
-        int[][] kn = generatePerRoundKeys(key);
-        int[] ciphertext = encodeData(plaintext, kn);
-
-        return ciphertext;
-    }
-
-    /**
      * This function performs the mangler function.
      *
      * @param block Rn-1
@@ -217,13 +217,25 @@ public class Crypto {
      */
     static int[] mangler(int[] block, int[] key) {
 
-        // Expand each block Rn-1 from 32 bits to 48 bits
-        int[] E_block = E(block); // E(Rn-1)
+        // Expand each 32-bit block Rn-1 to 48 bits based on E-bit selection table
+
+        // E(Rn-1)
+        int[] E = new int[48];
+        E[0] = block[31];
+        for (byte i = 1;  i < 6;  i++) E[i] = block[i-1];
+        for (byte i = 6;  i < 12; i++) E[i] = block[i-3];
+        for (byte i = 12; i < 18; i++) E[i] = block[i-5];
+        for (byte i = 18; i < 24; i++) E[i] = block[i-7];
+        for (byte i = 24; i < 30; i++) E[i] = block[i-9];
+        for (byte i = 30; i < 36; i++) E[i] = block[i-11];
+        for (byte i = 36; i < 42; i++) E[i] = block[i-13];
+        for (byte i = 42; i < 47; i++) E[i] = block[i-15];
+        E[47] = block[0];
 
         // result = Kn XOR E(Rn-1)
         int[] result = new int[48];
         for (byte i = 0; i < 48; i++) {
-            result[i] = E_block[i] ^ key[i];
+            result[i] = E[i] ^ key[i];
         }
 
         // Split result into 8 groups of 6 bits
@@ -327,30 +339,6 @@ public class Crypto {
         m_result[30] = sbox_output[3];  m_result[31] = sbox_output[24];
 
         return m_result;
-    }
-
-    /**
-     * This method expands 32-bit blocks to 48 bits for the mangler function
-     * based on an E-bit selection table
-     *
-     * @param arr the 32-bit block in binary
-     * @return    the 48-bit block in binary
-     */
-    static int[] E(int[] arr) {
-
-        int[] E = new int[48];
-        E[0] = arr[31];
-        for (byte i = 1;  i < 6;  i++) E[i] = arr[i-1];
-        for (byte i = 6;  i < 12; i++) E[i] = arr[i-3];
-        for (byte i = 12; i < 18; i++) E[i] = arr[i-5];
-        for (byte i = 18; i < 24; i++) E[i] = arr[i-7];
-        for (byte i = 24; i < 30; i++) E[i] = arr[i-9];
-        for (byte i = 30; i < 36; i++) E[i] = arr[i-11];
-        for (byte i = 36; i < 42; i++) E[i] = arr[i-13];
-        for (byte i = 42; i < 47; i++) E[i] = arr[i-15];
-        E[47] = arr[0];
-
-        return E;
     }
 
     /** this method implements the ECB encryption algorithm */
