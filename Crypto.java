@@ -71,15 +71,15 @@ public class Crypto {
     }
 
     /**
-     * This method generates 16 blocks CnDn, 1 <= n <= 16,
+     * This method generates 16 28-bit blocks CnDn, 1 <= n <= 16,
      * used to generate the per-round keys for DES.
      * <p>
      * The 56-bit permutated key p_k is split into 2 halves C0 and D0.
      * Cn and Dn, 1 <= n <= 16, are blocks generated from the previous pair,
      * Cn-1 and Dn-1, using a series of left-shifts of the previous blocks.
      *
-     * @param p_k the permutated key
-     * @return    CnDn, 16 blocks generated from p_k
+     * @param p_k the permutated main key for DES
+     * @return    CnDn, 16 28-bit blocks generated from p_k
      */
     private static int[][] generateCnDn(int[] p_k) {
         int[][] cn = new int[17][28]; // C0,C1...,C16
@@ -102,15 +102,11 @@ public class Crypto {
             }
             // Move bits that were in the front to the back after left-shifts
             if (i != 1 && i != 2 && i != 9 && i != 16) {
-                cn[i][26] = cn[i-1][0];
-                cn[i][27] = cn[i-1][1];
-                dn[i][26] = dn[i-1][0];
-                dn[i][27] = dn[i-1][1];
+                cn[i][26] = cn[i-1][0];  cn[i][27] = cn[i-1][1];
+                dn[i][26] = dn[i-1][0];  dn[i][27] = dn[i-1][1];
             } else {
-                cn[i][26] = cn[i-1][27];
-                cn[i][27] = cn[i-1][0];
-                dn[i][26] = dn[i-1][27];
-                dn[i][27] = dn[i-1][0];
+                cn[i][26] = cn[i-1][27]; cn[i][27] = cn[i-1][0];
+                dn[i][26] = dn[i-1][27]; dn[i][27] = dn[i-1][0];
             }
         }
 
