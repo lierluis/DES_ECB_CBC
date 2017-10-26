@@ -34,7 +34,7 @@ public class Crypto {
      * @param key an int[] array containing the 64-bit key in binary
      * @return    an int[][] 2d array contianing 16 48-bit per-round keys
      */
-    public static int[][] generatePerRoundKeys(int[] key) {
+    private static int[][] generatePerRoundKeys(int[] key) {
         // Permutate key (only uses 56 useful bits)
         int[] p_k = new int[56];
         p_k[0]  = key[56]; p_k[1]  = key[48]; p_k[2]  = key[40];
@@ -142,7 +142,7 @@ public class Crypto {
      * @param kn        the per-round keys in binary
      * @return          the ciphertext in binary
      */
-    public static int[] encodeData(int[] plaintext, int[][] kn) {
+    private static int[] encodeData(int[] plaintext, int[][] kn) {
         // Initial permutation (IP) of plaintext
         int[] IP = new int[64];
         for (byte i = 0; i < 8; i++) {
@@ -215,7 +215,7 @@ public class Crypto {
      * @param key   Kn
      * @return      result of mangler function
      */
-    static int[] mangler(int[] block, int[] key) {
+    private static int[] mangler(int[] block, int[] key) {
 
         // Expand each 32-bit block Rn-1 to 48 bits based on E-bit selection table
 
