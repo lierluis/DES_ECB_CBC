@@ -351,7 +351,7 @@ public class Crypto {
         }
 
         // S-box values are found in decimal, then converted to binary strings
-        S-box values are found in decimal, then converted to binary strings
+        // S-box values are found in decimal, then converted to binary strings
         String[] sbox_values = new String[8];
         for (byte i = 0; i < 8; i++) {
             sbox_values[i] = Integer.toBinaryString(SBOX[i][rows_dec[i]][cols_dec[i]]);
