@@ -167,42 +167,7 @@ public class Crypto {
      */
     private static int[] encodeData(int[] plaintext, int[][] kn) {
         int[] IP = plaintextInitialPermutation(plaintext);
-
-        // Divide IP into 32-bit halves L0 and R0.
-        //
-        // DES rounds: generate 32-bit Ln and Rn, 1 <= n <= 16, using
-        // a mangler function that operates on data blocks of 32 bits
-        // and keys of 48 bits to produce a block of 32 bits.
-        //
-        // Calculating Ln and Rn:
-        //   Step 1. Ln = Rn-1
-        //   Step 2. Rn = Ln-1 XOR mangler_function(Rn-1, Kn)
-
-        int[][] Ln = new int[17][32];
-        int[][] Rn = new int[17][32];
-
-        System.arraycopy(IP, 0, Ln[0], 0, 32); // L0
-        System.arraycopy(IP, 32, Rn[0], 0, 32); // R0
-
-        int[][] mangler_result = new int[16][32];
-
-        for (byte i = 1; i < 17; i++) {
-            // Step 1
-            Ln[i] = Rn[i-1];
-
-            // Step 2
-            mangler_result[i-1] = mangler(Rn[i-1], kn[i-1]);
-            for (byte j = 0; j < 32; j++) {
-                Rn[i][j] = Ln[i-1][j] ^ mangler_result[i-1][j];
-            }
-        }
-
-        // R16L16 holds the reversed final 64-bit block from the 16th DES round
-        int[] R16L16 = new int[64];
-        for (byte i = 0; i < 32; i++) {
-            R16L16[i] = Rn[16][i];
-            R16L16[i+32] = Ln[16][i];
-        }
+        int[] R16L16 = performDESRounds(IP, kn);
 
         // Apply a final permutation to R16L16 to obtain the DES ciphertext
         int[] ciphertext = new int[64];
@@ -222,6 +187,9 @@ public class Crypto {
 
     /**
      * This function performs an initial permutation (IP) on the plaintext message.
+     *
+     * @param plaintext the main plaintext message for DES
+     * @return          the plaintext permutated
      */
     private static int[] plaintextInitialPermutation(int[] plaintext) {
         int[] IP = new int[64];
@@ -236,6 +204,46 @@ public class Crypto {
             IP[(8*4) - (i+1)] = plaintext[(8*i) + 7]; // H
         }
         return IP;
+    }
+
+    /**
+     * This method performs 16 DES rounds, generating a 64-bit block for DES.
+     * <p>
+     * The initial permutation IP is divided into 32-bit halves L0 and R0.
+     * A mangler function that operates on data blocks of 32 bits Ln and Rn
+     * and keys of 48 bits Kn, is then used to produce a block of 32 bits.
+     *
+     * @param IP the permuated plaintext
+     * @return   a 32-bit block used to create the ciphertext of the plaintext
+     */
+    private static int[] performDESRounds(int[] IP, int[][] kn) {
+        int[][] Ln = new int[17][32];
+        int[][] Rn = new int[17][32];
+
+        System.arraycopy(IP, 0, Ln[0], 0, 32); // L0
+        System.arraycopy(IP, 32, Rn[0], 0, 32); // R0
+
+        int[][] mangler_result = new int[16][32];
+
+        // Calculating Ln and Rn
+        for (byte i = 1; i < 17; i++) {
+            // Step 1. Ln = Rn-1
+            Ln[i] = Rn[i-1];
+
+            // Step 2. Rn = Ln-1 XOR mangler_function(Rn-1, Kn)
+            mangler_result[i-1] = mangler(Rn[i-1], kn[i-1]);
+            for (byte j = 0; j < 32; j++) {
+                Rn[i][j] = Ln[i-1][j] ^ mangler_result[i-1][j];
+            }
+        }
+
+        // R16L16 holds the reversed final 64-bit block from the 16th DES round
+        int[] R16L16 = new int[64];
+        for (byte i = 0; i < 32; i++) {
+            R16L16[i] = Rn[16][i];
+            R16L16[i+32] = Ln[16][i];
+        }
+        return R16L16;
     }
 
     /**
