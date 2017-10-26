@@ -5,13 +5,7 @@
 
 public class Crypto {
 
-    /** this method implements the DES encryption algorithm */
-    public static int[] DES(int[] plaintext, int[] key) {
-        if (plaintext.length != 64 || key.length != 64) {
-            System.err.println("Size not 64");
-            System.exit(1);
-        }
-
+    public static int[][] generatePerRoundKeys(int[] key) {
         // permutate key (only uses 56 useful bits)
         int[] p_k = new int[56];
         p_k[0]  = key[56]; p_k[1]  = key[48]; p_k[2]  = key[40];
@@ -101,6 +95,21 @@ public class Crypto {
             kn[i][44] = cndn[i][49]; kn[i][45] = cndn[i][35];
             kn[i][46] = cndn[i][28]; kn[i][47] = cndn[i][31];
         }
+
+        return kn;
+    }
+
+    /** this method implements the DES encryption algorithm */
+    public static int[] DES(int[] plaintext, int[] key) {
+        if (plaintext.length != 64 || key.length != 64) {
+            System.err.println("Size not 64");
+            System.exit(1);
+        }
+
+        int[][] kn = new int[16][48];
+        kn = generatePerRoundKeys(key);
+
+
 
         // initial permutation of plaintext
         int[] IP = new int[64];
