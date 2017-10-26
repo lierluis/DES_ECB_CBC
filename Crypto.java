@@ -291,11 +291,15 @@ public class Crypto {
         return E;
     }
 
+    /**
+     * This method uses 8 groups of 6 bits as addresses to tables known
+     * as S-boxes, where 4-bit numbers are located. Each group of 6 bits
+     * is transformed into these 4-bit numbers.
+     *
+     * @param B 8 groups of 6 bits used as addresses to S-boxes
+     * @return  8 groups of 4 bits found in S-boxes
+     */
     private static int[] lookupSBoxes(int[][] B) {
-        // Each of the 8 groups of 6 bits will be used as addresses to
-        // tables known as "S-boxes", where 4-bit numbers are located.
-        // Each group of 6 bits will be transformed into these 4-bit numbers.
-
         // Translate each 6 bits of B into rows and columns of S-boxes
         String[] rows_bin = new String[8];
         String[] cols_bin = new String[8];
@@ -368,6 +372,13 @@ public class Crypto {
         return sbox_output;
     }
 
+    /**
+     * This method permutates the bits generated from the S-boxes
+     * as the final step for the mangler function.
+     *
+     * @param sbox_output the array of bits generated from lookupSBoxes()
+     * @return            the permutation of sbox_output
+     */
     private static int[] permutateSBoxOutput(int[] sbox_output) {
         // Permutate the S-box output to get the result of the mangler function
         int[] m_result = new int[32];
