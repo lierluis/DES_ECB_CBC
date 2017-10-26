@@ -596,7 +596,7 @@ public class Crypto {
     /**
      * This method prints 1d arrays with a custom look
      */
-    static void print(int[] arr) {
+    static void array_print(int[] arr) {
         for (int i = 0; i < arr.length; i++) {
             System.out.print(arr[i]);
             if (arr.length == 64) {
@@ -623,28 +623,29 @@ public class Crypto {
     /**
      * This method prints 2d arrays
      */
-    static void print(int[][] arr) {
+    static void array_print(int[][] arr) {
         for (int i = 0; i < arr.length; i++) {
-            print(arr[i]);
+            array_print(arr[i]);
         }
         System.out.println();
     }
 
     public static void main(String[] args) {
-        int[] plaintext_DES = {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0,
-            0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1,
-            0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1,
-            1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1};
-        int[] key_DES = {0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0,
-            0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0,
-            1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1,
-            1, 1, 1, 1, 1, 0, 0, 0, 1};
+        int[] plaintext_DES = {
+            0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1,
+            0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1,
+            1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1,
+            1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1 };
+        int[] key_DES = {
+            0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0,
+            0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1,
+            1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0,
+            1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1 };
 
         int[] ciphertext_DES = DES(plaintext_DES, key_DES);
         System.out.println("DES");
-        print(ciphertext_DES);
+        array_print(ciphertext_DES);
 
-        /*
         String plaintext_ECB_1 = "I LOVE SECURITY";
         String key_ECB_1 = "ABCDEFGH";
         String plaintext_ECB_2 = "GO GATORS!";
@@ -684,7 +685,6 @@ public class Crypto {
             System.out.print(ciphertext_CBC_2[i] + " ");
         }
         System.out.println("");
-        */
     }
 
 }
