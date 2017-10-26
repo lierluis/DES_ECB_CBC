@@ -110,10 +110,7 @@ public class Crypto {
             System.exit(1);
         }
 
-        int[][] kn = new int[16][48];
-        kn = generatePerRoundKeys(key);
-
-
+        int[][] kn = generatePerRoundKeys(key);
 
         // initial permutation of plaintext
         int[] IP = new int[64];
