@@ -630,11 +630,6 @@ public class Crypto {
         System.out.println();
     }
 
-    /** I'm lazy, ok? */
-    static void p(String s) {
-        System.out.println(s);
-    }
-
     public static void main(String[] args) {
         int[] plaintext_DES = {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0,
             0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1,
@@ -646,7 +641,7 @@ public class Crypto {
             1, 1, 1, 1, 1, 0, 0, 0, 1};
 
         int[] ciphertext_DES = DES(plaintext_DES, key_DES);
-        p("DES");
+        System.out.println("DES");
         print(ciphertext_DES);
 
         /*
@@ -655,19 +650,19 @@ public class Crypto {
         String plaintext_ECB_2 = "GO GATORS!";
         String key_ECB_2 = "ABCDEFGH";
 
-        p("ECB_1");
+        System.out.println("ECB_1");
         int[] ciphertext_ECB_1 = ECB(plaintext_ECB_1, key_ECB_1);
         for (int i = 0; i < ciphertext_ECB_1.length; i++) {
             System.out.print(ciphertext_ECB_1[i] + " ");
         }
-        p("");
+        System.out.println("");
 
-        p("ECB_2");
+        System.out.println("ECB_2");
         int[] ciphertext_ECB_2 = ECB(plaintext_ECB_2, key_ECB_2);
         for (int i = 0; i < ciphertext_ECB_2.length; i++) {
             System.out.print(ciphertext_ECB_2[i] + " ");
         }
-        p("");
+        System.out.println("");
 
         String plaintext_CBC_1 = "I LOVE SECURITY";
         String key_CBC_1 = "ABCDEFGH";
@@ -676,19 +671,19 @@ public class Crypto {
         String key_CBC_2 = "ABCDEFGH";
         String IV_2 = "ABCDEFGH";
 
-        p("CBC_1");
+        System.out.println("CBC_1");
         int[] ciphertext_CBC = CBC(plaintext_CBC_1, key_CBC_1, IV_1);
         for (int i = 0; i < ciphertext_CBC.length; i++) {
             System.out.print(ciphertext_CBC[i] + " ");
         }
-        p("");
+        System.out.println("");
 
-        p("CBC_2");
+        System.out.println("CBC_2");
         int[] ciphertext_CBC_2 = CBC(plaintext_CBC_2, key_CBC_2, IV_2);
         for (int i = 0; i < ciphertext_CBC_2.length; i++) {
             System.out.print(ciphertext_CBC_2[i] + " ");
         }
-        p("");
+        System.out.println("");
         */
     }
 
