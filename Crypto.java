@@ -643,27 +643,45 @@ public class Crypto {
             1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1 };
 
         int[] ciphertext_DES = DES(plaintext_DES, key_DES);
-        System.out.println("DES");
-        array_print(ciphertext_DES);
+        System.out.println("-----DES--------------------------");
+        System.out.print(" Plaintext: "); array_print(plaintext_DES);
+        System.out.print("       Key: "); array_print(key_DES);
+        System.out.print("Ciphertext: "); array_print(ciphertext_DES);
 
         String plaintext_ECB_1 = "I LOVE SECURITY";
         String key_ECB_1 = "ABCDEFGH";
         String plaintext_ECB_2 = "GO GATORS!";
         String key_ECB_2 = "ABCDEFGH";
 
-        System.out.println("ECB_1");
+        System.out.println("-----ECB 1------------------------");
         int[] ciphertext_ECB_1 = ECB(plaintext_ECB_1, key_ECB_1);
+        System.out.print(" Plaintext: ");
+        for (int i = 0; i < plaintext_ECB_1.length(); i++) {
+            System.out.print(plaintext_ECB_1.charAt(i));
+        }
+        System.out.print("\n       Key: ");
+        for (int i = 0; i < key_ECB_1.length(); i++) {
+            System.out.print(key_ECB_1.charAt(i));
+        }
+        System.out.print("\nCiphertext: ");
         for (int i = 0; i < ciphertext_ECB_1.length; i++) {
             System.out.print(ciphertext_ECB_1[i] + " ");
         }
-        System.out.println("");
 
-        System.out.println("ECB_2");
+        System.out.println("\n-----ECB 2------------------------");
         int[] ciphertext_ECB_2 = ECB(plaintext_ECB_2, key_ECB_2);
+        System.out.print(" Plaintext: ");
+        for (int i = 0; i < plaintext_ECB_2.length(); i++) {
+            System.out.print(plaintext_ECB_2.charAt(i));
+        }
+        System.out.print("\n       Key: ");
+        for (int i = 0; i < key_ECB_2.length(); i++) {
+            System.out.print(key_ECB_2.charAt(i));
+        }
+        System.out.print("\nCiphertext: ");
         for (int i = 0; i < ciphertext_ECB_2.length; i++) {
             System.out.print(ciphertext_ECB_2[i] + " ");
         }
-        System.out.println("");
 
         String plaintext_CBC_1 = "I LOVE SECURITY";
         String key_CBC_1 = "ABCDEFGH";
@@ -672,19 +690,44 @@ public class Crypto {
         String key_CBC_2 = "ABCDEFGH";
         String IV_2 = "ABCDEFGH";
 
-        System.out.println("CBC_1");
+        System.out.println("\n-----CBC 1------------------------");
         int[] ciphertext_CBC = CBC(plaintext_CBC_1, key_CBC_1, IV_1);
+        System.out.print(" Plaintext: ");
+        for (int i = 0; i < plaintext_CBC_1.length(); i++) {
+            System.out.print(plaintext_CBC_1.charAt(i));
+        }
+        System.out.print("\n       Key: ");
+        for (int i = 0; i < key_CBC_1.length(); i++) {
+            System.out.print(key_CBC_1.charAt(i));
+        }
+        System.out.print("\n        IV: ");
+        for (int i = 0; i < IV_1.length(); i++) {
+            System.out.print(IV_1.charAt(i));
+        }
+        System.out.print("\nCiphertext: ");
         for (int i = 0; i < ciphertext_CBC.length; i++) {
             System.out.print(ciphertext_CBC[i] + " ");
         }
-        System.out.println("");
 
-        System.out.println("CBC_2");
+        System.out.println("\n-----CBC 2------------------------");
         int[] ciphertext_CBC_2 = CBC(plaintext_CBC_2, key_CBC_2, IV_2);
+        System.out.print(" Plaintext: ");
+        for (int i = 0; i < plaintext_CBC_2.length(); i++) {
+            System.out.print(plaintext_CBC_2.charAt(i));
+        }
+        System.out.print("\n       Key: ");
+        for (int i = 0; i < key_CBC_2.length(); i++) {
+            System.out.print(key_CBC_2.charAt(i));
+        }
+        System.out.print("\n        IV: ");
+        for (int i = 0; i < IV_2.length(); i++) {
+            System.out.print(IV_2.charAt(i));
+        }
+        System.out.print("\nCiphertext: ");
         for (int i = 0; i < ciphertext_CBC_2.length; i++) {
             System.out.print(ciphertext_CBC_2[i] + " ");
         }
-        System.out.println("");
+        System.out.println();
     }
 
 }
